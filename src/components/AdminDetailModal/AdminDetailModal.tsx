@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Input, Modal, notification, Popconfirm } from 'antd';
-import * as S from './style';
+import React, { useEffect, useState } from "react";
+import { Button, Input, Modal, notification, Popconfirm } from "antd";
+import * as S from "./style";
 
-import { useMutation } from '@apollo/client';
-import TransformBox from '../TransformBox';
-import { DELETE_ADMIN } from 'src/graphql/mutation/deleteAdmin';
-import { CREATE_OTP_QR } from 'src/graphql/mutation/createNotice copy';
-import { SIGN_UP_BY_ADMIN } from 'src/graphql/mutation/signUpByAdmin';
+import { useMutation } from "@apollo/client";
+import TransformBox from "../TransformBox";
+import { DELETE_ADMIN } from "src/graphql/mutation/deleteAdmin";
+import { CREATE_OTP_QR } from "src/graphql/mutation/createOtopQr";
+import { SIGN_UP_BY_ADMIN } from "src/graphql/mutation/signUpByAdmin";
 
 export type SubmitType = {
   email?: string;
@@ -46,21 +46,21 @@ export function AdminDetailModal({
   const [adminInfo, setAdminInfo] = useState<SubmitType>({
     adminRoles: [
       {
-        name: 'READ_DASHBOARD',
+        name: "READ_DASHBOARD",
         id: 2,
       },
       {
-        name: 'READ_PARTNERSHIP_INQUIRY',
+        name: "READ_PARTNERSHIP_INQUIRY",
         id: 17,
       },
       {
-        name: 'READ_INQUIRY',
+        name: "READ_INQUIRY",
         id: 7,
       },
     ],
-    email: '',
-    password: '',
-    otpSecret: '',
+    email: "",
+    password: "",
+    otpSecret: "",
   });
 
   const onCreateQr = () => {
@@ -69,9 +69,9 @@ export function AdminDetailModal({
 
   const onCreateAdmin = () => {
     if (!adminInfo.password?.length) {
-      notification.error({ message: '비밀번호를 입력해주세요.' });
+      notification.error({ message: "비밀번호를 입력해주세요." });
     } else if (!adminInfo.otpSecret.length) {
-      notification.error({ message: 'Otp Secret code를 입력해주세요.' });
+      notification.error({ message: "Otp Secret code를 입력해주세요." });
     } else {
       signUpByAdmin({ variables: { ...adminInfo } });
     }
@@ -83,14 +83,14 @@ export function AdminDetailModal({
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    keyword: string,
+    keyword: string
   ) => {
     setAdminInfo({
       ...adminInfo,
       [keyword]: e.target.value,
     });
 
-    if (keyword === 'email') {
+    if (keyword === "email") {
       setEmail(e.target.value);
     }
   };
@@ -99,7 +99,7 @@ export function AdminDetailModal({
     onCompleted: (data) => {
       setOtpSecret(data.createOtpQr.otpSecret);
       setOtpUrl(data.createOtpQr.url);
-      notification.success({ message: 'Qr코드를 생성했습니다' });
+      notification.success({ message: "Qr코드를 생성했습니다" });
       handleCancel();
       setQrModalopen(true);
     },
@@ -111,7 +111,7 @@ export function AdminDetailModal({
 
   const [signUpByAdmin] = useMutation(SIGN_UP_BY_ADMIN, {
     onCompleted: (data) => {
-      notification.success({ message: '관리자를 생성했습니다' });
+      notification.success({ message: "관리자를 생성했습니다" });
     },
     onError: (e) => {
       notification.error({ message: e.message });
@@ -121,7 +121,7 @@ export function AdminDetailModal({
 
   const [deleteAdmin] = useMutation(DELETE_ADMIN, {
     onCompleted: () => {
-      notification.success({ message: '관리자를 삭제했습니다' });
+      notification.success({ message: "관리자를 삭제했습니다" });
       handleCancel();
       refetch();
     },
@@ -136,28 +136,28 @@ export function AdminDetailModal({
     if (admin) {
       setAdminInfo({
         ...admin,
-        password: 'qweasd123@',
+        password: "qweasd123@",
       });
       setPasswordChange(true);
     } else {
       setAdminInfo({
         adminRoles: [
           {
-            name: 'READ_DASHBOARD',
+            name: "READ_DASHBOARD",
             id: 2,
           },
           {
-            name: 'READ_PARTNERSHIP_INQUIRY',
+            name: "READ_PARTNERSHIP_INQUIRY",
             id: 17,
           },
           {
-            name: 'READ_INQUIRY',
+            name: "READ_INQUIRY",
             id: 7,
           },
         ],
-        email: '',
-        password: '',
-        otpSecret: '',
+        email: "",
+        password: "",
+        otpSecret: "",
       });
       setPasswordChange(false);
     }
@@ -179,15 +179,15 @@ export function AdminDetailModal({
       width={800}
       footer={false}
       bodyStyle={{
-        maxHeight: '90vh',
-        overflow: 'auto',
+        maxHeight: "90vh",
+        overflow: "auto",
       }}
     >
       <S.FormWrap>
         <S.Label>이메일</S.Label>
         <Input
           value={adminInfo.email}
-          onChange={(e) => handleChange(e, 'email')}
+          onChange={(e) => handleChange(e, "email")}
           disabled={admin || next ? true : false}
         />
       </S.FormWrap>
@@ -198,7 +198,7 @@ export function AdminDetailModal({
             <Input.Password
               disabled={isPasswordChange}
               value={adminInfo.password}
-              onChange={(e) => handleChange(e, 'password')}
+              onChange={(e) => handleChange(e, "password")}
             />
           </TransformBox>
         </S.FormWrap>
@@ -209,7 +209,7 @@ export function AdminDetailModal({
           <TransformBox width="100%">
             <Input
               value={adminInfo.otpSecret}
-              onChange={(e) => handleChange(e, 'otpSecret')}
+              onChange={(e) => handleChange(e, "otpSecret")}
             />
           </TransformBox>
         </S.FormWrap>

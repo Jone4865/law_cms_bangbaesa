@@ -1,14 +1,15 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import React from 'react';
-import Layout from '../components/Layout';
-import { Admin } from '../pages/Admin';
-import { Inquiry, Faq, Notice } from '../pages/Customer';
-import { Dashboard } from '../pages/Dashboard';
-import { Login } from '../pages/Login';
-import { Policy } from '../pages/Policy';
-import { Users } from '../pages/Users';
-import { useRecoilValue } from 'recoil';
-import { userTokenState } from '../recoil/atoms/userToken';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import React from "react";
+import Layout from "../components/Layout";
+import { Admin } from "../pages/Admin";
+import { Inquiry, Faq, Notice } from "../pages/Customer";
+import { Dashboard } from "../pages/Dashboard";
+import { Login } from "../pages/Login";
+import { Policy } from "../pages/Policy";
+import { Users } from "../pages/Users";
+import { useRecoilValue } from "recoil";
+import { userTokenState } from "../recoil/atoms/userToken";
+import { Banner } from "src/pages/Banner";
 
 function Root() {
   const tokenInfo = useRecoilValue(userTokenState);
@@ -30,6 +31,7 @@ function Root() {
               <Route path="notice" element={<Notice />} />
             </Route>
             <Route path="policy" element={<Policy />} />
+            <Route path="Banner" element={<Banner />} />
           </Route>
         )}
         {!tokenInfo.hasToken && (

@@ -1,18 +1,19 @@
-import { Button, Input, Modal, notification } from 'antd';
-import React, { useEffect, useState } from 'react';
-import * as S from './style';
+import { Button, Input, Modal, notification } from "antd";
+import React, { useEffect, useState } from "react";
+import * as S from "./style";
 
-import moment from 'moment';
+import moment from "moment";
 
-import { useMutation } from '@apollo/client';
-import TransformBox from '../TransformBox';
-import { FindManyUserInquiryByAdminOutput } from '../../graphql/generated/graphql';
-import { REPLY_USER_INQUIRY_BY_ADMIN } from 'src/graphql/mutation/replyUserInquiryByAdmin';
+import { useMutation } from "@apollo/client";
+import TransformBox from "../TransformBox";
+
+import { REPLY_USER_INQUIRY_BY_ADMIN } from "src/graphql/mutation/replyUserInquiryByAdmin";
+import { FindManyUserInquiryByAdminOutput } from "src/graphql/generated/graphql";
 
 type Props = {
   handleCancel: () => void;
   open: boolean;
-  data: FindManyUserInquiryByAdminOutput['userInquiries'][0] | undefined;
+  data: FindManyUserInquiryByAdminOutput["userInquiries"][0] | undefined;
   refetch: () => void;
 };
 
@@ -22,14 +23,14 @@ export function InquiryDetailModal({
   data,
   refetch,
 }: Props) {
-  const [reply, setReply] = useState('');
+  const [reply, setReply] = useState("");
 
   const handleReply = () => {
     if (data?.reply) {
       return handleCancel();
     }
     if (!reply.length) {
-      return notification.error({ message: '답변을 입력해주세요.' });
+      return notification.error({ message: "답변을 입력해주세요." });
     }
     replyUserInquiryByAdmin({
       variables: {
@@ -45,7 +46,7 @@ export function InquiryDetailModal({
 
   const [replyUserInquiryByAdmin] = useMutation(REPLY_USER_INQUIRY_BY_ADMIN, {
     onCompleted: () => {
-      notification.success({ message: '답변을 등록했습니다.' });
+      notification.success({ message: "답변을 등록했습니다." });
       handleCancel();
       refetch();
     },
@@ -58,7 +59,7 @@ export function InquiryDetailModal({
     if (data?.reply) {
       setReply(data.reply);
     } else {
-      setReply('');
+      setReply("");
     }
   }, [open]);
 
@@ -70,8 +71,8 @@ export function InquiryDetailModal({
       centered
       width={1000}
       bodyStyle={{
-        maxHeight: '90vh',
-        overflow: 'auto',
+        maxHeight: "90vh",
+        overflow: "auto",
       }}
     >
       <S.Wrap>
@@ -79,7 +80,7 @@ export function InquiryDetailModal({
       </S.Wrap>
       <S.Wrap>
         <S.Label>문의 날짜</S.Label>
-        {moment(data?.createdAt).format('YYYY-MM-DD HH:mm:ss')}
+        {moment(data?.createdAt).format("YYYY-MM-DD HH:mm:ss")}
       </S.Wrap>
 
       <h3>문의내용</h3>
@@ -110,7 +111,7 @@ export function InquiryDetailModal({
           }}
           onClick={handleReply}
         >
-          {data?.reply ? '확인' : '답변 작성'}
+          {data?.reply ? "확인" : "답변 작성"}
         </Button>
       </TransformBox>
     </Modal>

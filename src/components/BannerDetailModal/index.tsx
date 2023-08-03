@@ -1,0 +1,1 @@
+export { BannerDetailModal } from "./BannerDetailModal";

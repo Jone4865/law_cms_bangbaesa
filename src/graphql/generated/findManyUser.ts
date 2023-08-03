@@ -42,7 +42,7 @@ export interface findManyUser_findManyUser_users {
   /**
    * 휴대폰
    */
-  phone: string | null;
+  phone: string;
   /**
    * 이메일 인증
    */

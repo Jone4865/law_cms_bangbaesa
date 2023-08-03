@@ -1,48 +1,51 @@
-import { useLazyQuery } from '@apollo/client';
-import { Divider, Form, Input, Tag, Table, notification, Button } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
+import { useLazyQuery } from "@apollo/client";
+import { Divider, Form, Input, Tag, Table, notification, Button } from "antd";
+import { ColumnsType } from "antd/lib/table";
 
-import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import { InquiryDetailModal } from '../../components/InquiryDetailModal';
-import { UserDetailModal } from '../../components/UserDetailModal';
-import { FIND_MANY_USER_INQUIRY_BY_ADMIN } from '../../graphql/query/findManyUserInquiryByAdmin';
-import { FindManyUserInquiryByAdminOutput } from '../../graphql/generated/graphql';
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { InquiryDetailModal } from "../../components/InquiryDetailModal";
+import { UserDetailModal } from "../../components/UserDetailModal";
+import { FIND_MANY_USER_INQUIRY_BY_ADMIN } from "../../graphql/query/findManyUserInquiryByAdmin";
+import { FindManyUserInquiryByAdminOutput } from "../../graphql/generated/graphql";
 
 export function Inquiry() {
   const [open, setOpen] = useState(false);
   const [detailModalopen, setDetailModalopen] = useState(false);
   const [modalData, setModalData] =
-    useState<FindManyUserInquiryByAdminOutput['userInquiries'][0]>();
+    useState<FindManyUserInquiryByAdminOutput["userInquiries"][0]>();
   const [inquiryData, setInquiryData] = useState<
-    FindManyUserInquiryByAdminOutput['userInquiries']
+    FindManyUserInquiryByAdminOutput["userInquiries"]
   >([]);
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [current, setCurrent] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
 
   const columns: ColumnsType<
-    FindManyUserInquiryByAdminOutput['userInquiries'][0]
+    FindManyUserInquiryByAdminOutput["userInquiries"][0]
   > = [
     {
-      title: 'no',
-      key: 'id',
-      dataIndex: 'id',
-      align: 'center',
+      title: "no",
+      key: "id",
+      dataIndex: "id",
+      align: "center",
       render: (_val, _record, index) => index + 1,
     },
     {
-      title: '문의내용',
-      key: 'content',
-      dataIndex: 'content',
-      align: 'center',
+      title: "문의내용",
+      key: "content",
+      dataIndex: "content",
+      align: "center",
+      render: (val: string) => {
+        return val.length > 40 ? val.substr(0, 40) + "..." : val;
+      },
     },
     {
-      title: '닉네임',
-      key: 'userIdentity',
-      dataIndex: 'userIdentity',
+      title: "닉네임",
+      key: "userIdentity",
+      dataIndex: "userIdentity",
       render: (val, record) => {
         return (
           <Button
@@ -57,30 +60,30 @@ export function Inquiry() {
           </Button>
         );
       },
-      align: 'center',
+      align: "center",
     },
     {
-      title: '접수일시',
-      key: 'reportingDate',
-      dataIndex: 'reportingDate',
+      title: "접수일시",
+      key: "reportingDate",
+      dataIndex: "reportingDate",
       render: (val) => {
-        return moment(val).format('YYYY-MM-DD hh:mm');
+        return moment(val).format("YYYY-MM-DD hh:mm");
       },
-      align: 'center',
+      align: "center",
     },
     {
-      title: '처리일시',
-      key: 'processingDate',
-      dataIndex: 'processingDate',
+      title: "처리일시",
+      key: "processingDate",
+      dataIndex: "processingDate",
       render: (val, record) => {
-        return record.reply ? moment(val).format('YYYY-MM-DD hh:mm') : '-';
+        return record.reply ? moment(val).format("YYYY-MM-DD hh:mm") : "-";
       },
-      align: 'center',
+      align: "center",
     },
     {
-      title: '처리',
-      key: 'isReply',
-      dataIndex: 'reply',
+      title: "처리",
+      key: "isReply",
+      dataIndex: "reply",
       render: (val?: string) => {
         return val ? (
           <Tag color="blue">완료</Tag>
@@ -88,7 +91,7 @@ export function Inquiry() {
           <Tag color="error">미처리</Tag>
         );
       },
-      align: 'center',
+      align: "center",
     },
   ];
 
@@ -102,7 +105,7 @@ export function Inquiry() {
   };
 
   const handleRow = (
-    data: FindManyUserInquiryByAdminOutput['userInquiries'][0],
+    data: FindManyUserInquiryByAdminOutput["userInquiries"][0]
   ) => {
     setDetailModalopen(true);
     setModalData(data);
@@ -117,12 +120,12 @@ export function Inquiry() {
       variables: {
         take,
         skip,
-        searchText: values.searchText ? values.searchText : '',
+        searchText: values.searchText ? values.searchText : "",
       },
     });
     setCurrent(1);
     setSkip(0);
-    setSearchText(values.searchText ?? '');
+    setSearchText(values.searchText ?? "");
   };
 
   const handleRefetch = () => {
@@ -148,8 +151,8 @@ export function Inquiry() {
       onError: (e) => {
         notification.error({ message: e.message ?? `${e}` });
       },
-      fetchPolicy: 'no-cache',
-    },
+      fetchPolicy: "no-cache",
+    }
   );
 
   useEffect(() => {
@@ -168,7 +171,7 @@ export function Inquiry() {
       <UserDetailModal
         handleCancel={handleCancel}
         open={open}
-        identity={modalData?.userIdentity ?? ''}
+        identity={modalData?.userIdentity ?? ""}
       />
       <InquiryDetailModal
         data={modalData}
@@ -186,7 +189,7 @@ export function Inquiry() {
         columns={columns}
         dataSource={inquiryData}
         pagination={{
-          position: ['bottomCenter'],
+          position: ["bottomCenter"],
           showSizeChanger: true,
           onChange: handlePagination,
           onShowSizeChange: (_current, size) => setTake(size),
