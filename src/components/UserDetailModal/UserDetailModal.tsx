@@ -1,7 +1,7 @@
-import { Descriptions, Modal, Tabs } from 'antd';
+import { Descriptions, Modal, Tabs } from "antd";
 
-import React, { useEffect, useState } from 'react';
-import { UserInquiryHistory } from '../UserInquiryHistory/UserInquiryHistory';
+import React, { useEffect, useState } from "react";
+import { UserInquiryHistory } from "../UserInquiryHistory/UserInquiryHistory";
 
 type Props = {
   open: boolean;
@@ -18,10 +18,10 @@ export function UserDetailModal({
   identity,
   handleCancel,
 }: Props) {
-  const [selectedKey, setSeletedKey] = useState('1');
+  const [selectedKey, setSeletedKey] = useState("1");
 
   useEffect(() => {
-    setSeletedKey('1');
+    setSeletedKey("1");
   }, [open]);
 
   return (
@@ -31,8 +31,8 @@ export function UserDetailModal({
       footer={false}
       title={`${identity}님의 상세정보`}
       bodyStyle={{
-        maxHeight: '90vh',
-        overflow: 'auto',
+        maxHeight: "90vh",
+        overflow: "auto",
       }}
       centered
       width={1000}
@@ -52,9 +52,6 @@ export function UserDetailModal({
                 {email}
               </Descriptions.Item>
             )}
-            {/* <Descriptions.Item label="전화번호" span={24}>
-              {phone}
-            </Descriptions.Item> */}
           </Descriptions>
         </TabPane>
         <TabPane tab={<span>1:1 문의</span>} key="2">

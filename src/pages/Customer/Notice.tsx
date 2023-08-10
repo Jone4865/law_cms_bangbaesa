@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Divider,
@@ -7,39 +7,42 @@ import {
   notification,
   Select,
   Table,
-} from 'antd';
+} from "antd";
 
-import { useLazyQuery } from '@apollo/client';
-import { NoticeDetailModal } from '../../components/NoticeDetailModal';
-import TransformBox from '../../components/TransformBox';
-import { noticeColumns } from '../../utils/columns';
-import { FIND_MANY_NOTICE } from 'src/graphql/query/findManyNotice';
+import { useLazyQuery } from "@apollo/client";
+import { NoticeDetailModal } from "../../components/NoticeDetailModal";
+import TransformBox from "../../components/TransformBox";
+import { noticeColumns } from "../../utils/columns";
+import { FIND_MANY_NOTICE } from "src/graphql/query/findManyNotice";
 import {
   FindManyNoticeOutput,
   NoticeSearchKind,
-} from 'src/graphql/generated/graphql';
+} from "src/graphql/generated/graphql";
 
-import * as S from './style';
+import * as S from "./style";
+import useResponsive from "src/hooks/useResponsive";
 
 export function Notice() {
-  const [noticeData, setNoticeData] = useState<FindManyNoticeOutput['notices']>(
-    [],
+  const { isLessThanEitherMobile } = useResponsive();
+
+  const [noticeData, setNoticeData] = useState<FindManyNoticeOutput["notices"]>(
+    []
   );
 
   const searchKindArr = [
-    { id: 0, name: '제목', kind: NoticeSearchKind.Title },
-    { id: 1, name: '내용', kind: NoticeSearchKind.Content },
+    { id: 0, name: "제목", kind: NoticeSearchKind.Title },
+    { id: 1, name: "내용", kind: NoticeSearchKind.Content },
   ];
 
   const [modalData, setModalData] =
-    useState<FindManyNoticeOutput['notices'][0]>();
+    useState<FindManyNoticeOutput["notices"][0]>();
   const [open, setOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [current, setCurrent] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [searchKind, setSearchKind] = useState(NoticeSearchKind.Title);
   const [searchKindId, setSearchKindId] = useState(0);
 
@@ -61,7 +64,7 @@ export function Notice() {
     setIsEdit(false);
   };
 
-  const handleRow = (record: FindManyNoticeOutput['notices'][0]) => {
+  const handleRow = (record: FindManyNoticeOutput["notices"][0]) => {
     setOpen(true);
     setIsEdit(true);
     setModalData(record);
@@ -99,7 +102,7 @@ export function Notice() {
     });
     setSkip(0);
     setCurrent(1);
-    setSearchText(value.searchText ?? '');
+    setSearchText(value.searchText ?? "");
   };
 
   const [findManyNotice, { loading, refetch }] = useLazyQuery(
@@ -112,8 +115,8 @@ export function Notice() {
       onError: (e) => {
         notification.error({ message: e.message });
       },
-      fetchPolicy: 'no-cache',
-    },
+      fetchPolicy: "no-cache",
+    }
   );
 
   useEffect(() => {
@@ -141,36 +144,70 @@ export function Notice() {
       />
       <Divider>공지사항</Divider>
       <Form layout="inline" onFinish={handleSearch}>
-        <Form.Item name="searchText">
-          <S.Flex>
-            <Select
-              value={searchKindId}
-              style={{
-                width: 150,
-                marginRight: 10,
-              }}
-              onChange={setSearchKindId}
-            >
-              {searchKindArr.map((v) => {
-                return <Select.Option value={v.id}>{v.name}</Select.Option>;
-              })}
-            </Select>
-            <Input.Search
-              enterButton
-              placeholder="검색어"
-              onSearch={(e) => {
-                handleSearch({ searchText: e });
-              }}
-            />
-          </S.Flex>
-        </Form.Item>
+        {!isLessThanEitherMobile ? (
+          <S.Form>
+            <Form.Item name="searchText">
+              <S.Flex>
+                <Select
+                  value={searchKindId}
+                  style={{
+                    maxWidth: 150,
+                    marginRight: 10,
+                  }}
+                  onChange={setSearchKindId}
+                >
+                  {searchKindArr.map((v) => {
+                    return <Select.Option value={v.id}>{v.name}</Select.Option>;
+                  })}
+                </Select>
+                <Input.Search
+                  enterButton
+                  placeholder="검색어"
+                  onSearch={(e) => {
+                    handleSearch({ searchText: e });
+                  }}
+                />
+              </S.Flex>
+            </Form.Item>
+            <TransformBox justifyContent="flex-end">
+              <Button type="primary" onClick={handleClick}>
+                공지사항 등록
+              </Button>
+            </TransformBox>
+          </S.Form>
+        ) : (
+          <S.Form_Mobile>
+            <Form.Item name="searchText" style={{ margin: "0 0 10px auto" }}>
+              <S.Flex>
+                <Select
+                  value={searchKindId}
+                  style={{
+                    maxWidth: 150,
+                    marginRight: 10,
+                  }}
+                  onChange={setSearchKindId}
+                >
+                  {searchKindArr.map((v) => {
+                    return <Select.Option value={v.id}>{v.name}</Select.Option>;
+                  })}
+                </Select>
+                <Input.Search
+                  enterButton
+                  placeholder="검색어"
+                  onSearch={(e) => {
+                    handleSearch({ searchText: e });
+                  }}
+                />
+              </S.Flex>
+            </Form.Item>
+            <TransformBox justifyContent="flex-end">
+              <Button type="primary" onClick={handleClick}>
+                공지사항 등록
+              </Button>
+            </TransformBox>
+          </S.Form_Mobile>
+        )}
       </Form>
-
-      <TransformBox justifyContent="flex-end">
-        <Button type="primary" onClick={handleClick}>
-          공지사항 등록
-        </Button>
-      </TransformBox>
 
       <Table
         columns={noticeColumns}
@@ -181,7 +218,7 @@ export function Notice() {
           };
         }}
         pagination={{
-          position: ['bottomCenter'],
+          position: ["bottomCenter"],
           showSizeChanger: true,
           onChange: handlePagination,
           onShowSizeChange: (_current, size) => setTake(size),
@@ -189,7 +226,8 @@ export function Notice() {
           current: current,
         }}
         style={{
-          marginTop: '30px',
+          marginTop: "30px",
+          whiteSpace: "nowrap",
         }}
         rowKey={(rec) => rec.id}
         loading={loading}

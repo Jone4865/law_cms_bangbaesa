@@ -35,7 +35,7 @@ export interface deleteBanner_deleteBanner {
   /**
    * 배너 경로
    */
-  path: string;
+  path: string | null;
   /**
    * 생성일
    */

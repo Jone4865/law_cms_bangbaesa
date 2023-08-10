@@ -8,10 +8,14 @@ import type { UploadFile } from "antd/es/upload/interface";
 import { useMutation } from "@apollo/client";
 import { CREATE_BANNER } from "src/graphql/mutation/createBanner";
 import Loader from "../Loader";
+import { findManyBanner } from "src/graphql/generated/findManyBanner";
+import { UPDATE_BANNER } from "src/graphql/mutation/updateBanner";
 
 type Props = {
   open: boolean;
   handleCancel: () => void;
+  detailData: findManyBanner["findManyBanner"][0] | undefined;
+  isEdit?: boolean;
 };
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -22,7 +26,12 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-export function BannerDetailModal({ handleCancel, open }: Props) {
+export function BannerDetailModal({
+  handleCancel,
+  open,
+  detailData,
+  isEdit,
+}: Props) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -35,20 +44,35 @@ export function BannerDetailModal({ handleCancel, open }: Props) {
   const [index, setIndex] = useState<number>(1);
 
   const handleSubmit = () => {
-    if (!index) {
-      message.warn("순서를 입력해주세요.");
-    } else if (!arrowColor) {
-      message.warn("화살표 색상을 입력해주세요.");
-    } else if (!dotColor) {
-      message.warn("하단 버튼 색상을 입력해주세요.");
+    if (!isEdit) {
+      if (!index) {
+        message.warn("순서를 입력해주세요.");
+      } else if (!arrowColor) {
+        message.warn("화살표 색상을 입력해주세요.");
+      } else if (!dotColor) {
+        message.warn("하단 버튼 색상을 입력해주세요.");
+      } else {
+        createBanner({
+          variables: {
+            arrowColor,
+            dotColor,
+            index,
+            pcFile: pcFile[0].originFileObj,
+            mobileFile: mobileFile[0].originFileObj,
+            path,
+          },
+        });
+      }
     } else {
-      createBanner({
+      updateBanner({
         variables: {
+          updateBannerId: detailData && +detailData?.id,
           arrowColor,
           dotColor,
           index,
-          pcFile: pcFile[0].originFileObj,
-          mobileFile: mobileFile[0].originFileObj,
+          pcFile: pcFile.length !== 0 ? pcFile[0].originFileObj : undefined,
+          mobileFile:
+            mobileFile.length !== 0 ? mobileFile[0].originFileObj : undefined,
           path,
         },
       });
@@ -87,14 +111,27 @@ export function BannerDetailModal({ handleCancel, open }: Props) {
     fetchPolicy: "no-cache",
   });
 
+  const [updateBanner, { loading: loading1 }] = useMutation(UPDATE_BANNER, {
+    onCompleted: () => {
+      message.success("내용을 수정하였습니다.");
+      handleCancel();
+    },
+    onError: (e) => {
+      notification.error({ message: e.message });
+    },
+    fetchPolicy: "no-cache",
+  });
+
   useEffect(() => {
-    setPcFile([]);
-    setMobileFile([]);
-    setIndex(1);
-    setArrowColor("black");
-    setDotColor("black");
-    setPath("");
-  }, [open]);
+    if (isEdit && detailData) {
+      setIndex(detailData.index);
+      setArrowColor(detailData.arrowColor);
+      setDotColor(detailData.dotColor);
+      setPath(detailData.path ? detailData.path : "");
+    }
+  }, [open, isEdit]);
+
+  useEffect(() => {}, [mobileFile, pcFile]);
 
   const uploadButton = (
     <div>
@@ -107,7 +144,7 @@ export function BannerDetailModal({ handleCancel, open }: Props) {
     <Modal
       open={open}
       onCancel={handleCancel}
-      title="배너 등록"
+      title={detailData ? "배너 수정" : "배너 등록"}
       centered
       width={800}
       bodyStyle={{
@@ -119,12 +156,12 @@ export function BannerDetailModal({ handleCancel, open }: Props) {
           <Button onClick={handleCancel}>취소</Button>
 
           <Button type="primary" onClick={handleSubmit}>
-            등록
+            {detailData ? "수정" : "등록"}
           </Button>
         </TransformBox>
       }
     >
-      {loading && <Loader />}
+      {(loading || loading1) && <Loader />}
       <TransformBox alignItems="center" justifyContent="space-between">
         <h3>순서</h3>
       </TransformBox>
@@ -173,7 +210,16 @@ export function BannerDetailModal({ handleCancel, open }: Props) {
         onPreview={handlePreview}
         onChange={handlePcFileChange}
       >
-        {pcFile.length >= 1 ? null : uploadButton}
+        {detailData && isEdit ? (
+          <img
+            width={"100px"}
+            height={"100px"}
+            alt="배너 이미지"
+            src={`${process.env.REACT_APP_IMAGE_URL}/banner/${detailData?.pcFileName}`}
+          />
+        ) : pcFile.length >= 1 ? null : (
+          uploadButton
+        )}
       </Upload>
       <TransformBox
         alignItems="center"
@@ -188,8 +234,18 @@ export function BannerDetailModal({ handleCancel, open }: Props) {
         onPreview={handlePreview}
         onChange={handleMobileFileChange}
       >
-        {mobileFile.length >= 1 ? null : uploadButton}
+        {detailData && isEdit ? (
+          <img
+            width={"100px"}
+            height={"100px"}
+            alt="배너 이미지"
+            src={`${process.env.REACT_APP_IMAGE_URL}/banner/${detailData?.mobileFileName}`}
+          />
+        ) : mobileFile.length >= 1 ? null : (
+          uploadButton
+        )}
       </Upload>
+
       <Modal
         open={previewOpen}
         title={previewTitle}

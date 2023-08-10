@@ -35,7 +35,7 @@ export interface findManyBanner_findManyBanner {
   /**
    * 배너 경로
    */
-  path: string;
+  path: string | null;
   /**
    * 생성일
    */

@@ -1,14 +1,14 @@
-import { useLayoutEffect, useState } from 'react';
-import { Menu, message } from 'antd';
-import { MenuOutlined } from '@ant-design/icons';
-import { useNavigate, useLocation } from 'react-router-dom';
-import * as S from './style';
-import { menuItems } from '../../utils/menuItems';
-import useResponsive from '../../hooks/useResponsive';
-import { useRecoilState } from 'recoil';
-import { userTokenState } from '../../recoil/atoms/userToken';
-import { useMutation } from '@apollo/client';
-import { SIGN_OUT_BY_ADMIN } from '../../graphql/mutation/signOutByAdmin';
+import { useLayoutEffect, useState } from "react";
+import { Menu, message } from "antd";
+import { MenuOutlined } from "@ant-design/icons";
+import { useNavigate, useLocation } from "react-router-dom";
+import * as S from "./style";
+import { menuItems } from "../../utils/menuItems";
+import useResponsive from "../../hooks/useResponsive";
+import { useRecoilState } from "recoil";
+import { userTokenState } from "../../recoil/atoms/userToken";
+import { useMutation } from "@apollo/client";
+import { SIGN_OUT_BY_ADMIN } from "../../graphql/mutation/signOutByAdmin";
 
 type MenuInfo = {
   key: string;
@@ -23,8 +23,8 @@ type MenuData = {
 export function AsideMenu() {
   const [visible, setVisible] = useState(false);
   const [menu, setMenu] = useState<MenuData>({
-    subMenu: '',
-    item: '',
+    subMenu: "",
+    item: "",
   });
 
   const navigator = useNavigate();
@@ -37,28 +37,28 @@ export function AsideMenu() {
   };
 
   const handleMoveHome = () => {
-    navigator('/');
+    navigator("/");
   };
 
   const handleClickMenu = (e: MenuInfo) => {
     const [item, subMenu] = e.keyPath;
     if (subMenu) {
-      const [, path] = item.split('-');
+      const [, path] = item.split("-");
       setMenu({
         item,
         subMenu,
       });
       return navigator(`/${subMenu}/${path}`);
     } else {
-      if (item === 'dashboard') {
+      if (item === "dashboard") {
         return handleMoveHome();
       }
-      if (item === 'logout') {
+      if (item === "logout") {
         return handleLogout();
       }
       setMenu({
         item,
-        subMenu: '',
+        subMenu: "",
       });
       return navigator(`/${item}`);
     }
@@ -66,7 +66,7 @@ export function AsideMenu() {
 
   const handleChangeSubMenu = (openKeys: string[]) => {
     if (openKeys.length < 1) {
-      return setMenu((prev) => ({ ...prev, subMenu: '' }));
+      return setMenu((prev) => ({ ...prev, subMenu: "" }));
     }
 
     const [, subMenu] = openKeys;
@@ -74,12 +74,12 @@ export function AsideMenu() {
   };
 
   useLayoutEffect(() => {
-    const [, subMenu, item] = pathname.split('/');
+    const [, subMenu, item] = pathname.split("/");
     if (!subMenu.length) {
-      return setMenu({ item: 'dashboard', subMenu: '' });
+      return setMenu({ item: "dashboard", subMenu: "" });
     }
     if (!item) {
-      return setMenu({ item: subMenu, subMenu: '' });
+      return setMenu({ item: subMenu, subMenu: "" });
     }
 
     setMenu({ item: `${subMenu}-${item}`, subMenu });
@@ -94,7 +94,7 @@ export function AsideMenu() {
     onError: (e) => {
       message.error(e.message ?? `${e}`);
     },
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
   });
 
   return (
@@ -103,14 +103,14 @@ export function AsideMenu() {
         <S.Mask
           onClick={() => {
             setVisible(false);
-            window.document.body.style.overflowY = 'auto';
+            window.document.body.style.overflowY = "auto";
           }}
         />
       )}
       {isLessThanEitherMobile && (
         <S.NavTop>
           <S.HeaderImage
-            src={'/img/logo/logo_on.png'}
+            src={"/img/logo/logo.png"}
             alt="로고"
             onClick={handleMoveHome}
           />
@@ -121,7 +121,7 @@ export function AsideMenu() {
               }}
               onClick={() => {
                 setVisible(true);
-                window.document.body.style.overflowY = 'hidden';
+                window.document.body.style.overflowY = "hidden";
               }}
             />
           </S.MenuIcon>
@@ -130,15 +130,15 @@ export function AsideMenu() {
       {(!isLessThanEitherMobile || visible) && (
         <S.Sider>
           <S.ImageWrap onClick={handleMoveHome}>
-            <S.Image alt="logo" src={'/img/logo/logo.png'} />
+            <S.Image alt="logo" src={"/img/logo/logo.png"} />
           </S.ImageWrap>
 
           <Menu
-            theme={isLessThanEitherMobile ? 'light' : 'dark'}
+            theme={isLessThanEitherMobile ? "light" : "dark"}
             mode="inline"
             onClick={handleClickMenu}
             onOpenChange={handleChangeSubMenu}
-            openKeys={[menu.subMenu ?? '']}
+            openKeys={[menu.subMenu ?? ""]}
             selectedKeys={[menu.item]}
             items={menuItems}
           />

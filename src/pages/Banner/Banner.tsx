@@ -1,5 +1,5 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { Button, Modal, Table, message, notification } from "antd";
+import { Button, Divider, Modal, Table, message, notification } from "antd";
 import React, { useEffect, useState } from "react";
 import { BannerDetailModal } from "src/components/BannerDetailModal";
 import { findManyBanner } from "src/graphql/generated/findManyBanner";
@@ -17,8 +17,10 @@ export function Banner() {
   const [skip, setSkip] = useState(0);
   const [take, setTake] = useState(10);
   const [totalCount, setTotalCount] = useState(10);
-
+  const [detailData, setDetailData] =
+    useState<findManyBanner["findManyBanner"][0]>();
   const [prevViewUrl, setPrevViewUrl] = useState("");
+  const [isEdit, setIsEdit] = useState(false);
 
   const handlePagination = (e: number) => {
     setCurrent(e);
@@ -30,6 +32,7 @@ export function Banner() {
   };
 
   const createModalVisibleHandle = () => {
+    setIsEdit(false);
     setCreateModalOpen(false);
     refetch();
   };
@@ -41,6 +44,12 @@ export function Banner() {
   const onClickImgHandle = (url: string) => {
     setPrevViewUrl(url);
     setPreviewOpen(true);
+  };
+
+  const handleRow = (rec: findManyBanner["findManyBanner"][0]) => {
+    setDetailData(rec);
+    setIsEdit(true);
+    setCreateModalOpen(true);
   };
 
   const [findManyBanner, { loading, refetch }] = useLazyQuery(
@@ -85,6 +94,7 @@ export function Banner() {
           src={`${process.env.REACT_APP_IMAGE_URL}/banner/${prevViewUrl}`}
         />
       </Modal>
+      <Divider>배너 관리</Divider>
       <S.CreateBtnWrap>
         <Button type="primary" onClick={() => setCreateModalOpen(true)}>
           등록
@@ -93,6 +103,8 @@ export function Banner() {
       <BannerDetailModal
         open={createModalOpen}
         handleCancel={createModalVisibleHandle}
+        detailData={detailData}
+        isEdit={isEdit}
       />
       <Table
         columns={bannerColumns({ deleteHandle, onClickImgHandle })}
@@ -106,6 +118,11 @@ export function Banner() {
           onShowSizeChange: (_current, size) => setTake(size),
           total: totalCount,
           current: current,
+        }}
+        onRow={(rec) => {
+          return {
+            onClick: () => handleRow(rec),
+          };
         }}
         style={{
           marginBottom: 30,

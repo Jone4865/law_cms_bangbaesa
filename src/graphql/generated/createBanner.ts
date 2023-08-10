@@ -35,7 +35,7 @@ export interface createBanner_createBanner {
   /**
    * 배너 경로
    */
-  path: string;
+  path: string | null;
   /**
    * 생성일
    */
@@ -55,5 +55,5 @@ export interface createBannerVariables {
   pcFile: any;
   mobileFile: any;
   index: number;
-  path: string;
+  path?: string | null;
 }

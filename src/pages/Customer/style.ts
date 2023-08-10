@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const AddButtonWrap = styled.div`
   display: flex;
@@ -12,4 +12,14 @@ export const ButtonWrap = styled.div`
 
 export const Flex = styled.div`
   display: flex;
+`;
+
+export const Form = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+export const Form_Mobile = styled.div`
+  width: 100%;
 `;

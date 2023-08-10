@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { PRIMARY } from '../../styles/colors';
+import styled from "styled-components";
+import { PRIMARY } from "../../styles/colors";
 
 export const ChartContainer = styled.div`
   display: grid;

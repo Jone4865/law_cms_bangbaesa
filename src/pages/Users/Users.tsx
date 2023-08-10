@@ -1,27 +1,27 @@
-import { useLazyQuery } from '@apollo/client';
-import { Divider, Form, Input, notification, Table } from 'antd';
+import { useLazyQuery } from "@apollo/client";
+import { Divider, Form, Input, notification, Table } from "antd";
 
-import React, { useEffect, useState } from 'react';
-import { UserDetailModal } from '../../components/UserDetailModal';
-import { userListColumns } from '../../utils/columns';
-import { FIND_MANY_USER } from 'src/graphql/query/findManyUser';
-import { FindManyUserOutput } from 'src/graphql/generated/graphql';
+import React, { useEffect, useState } from "react";
+import { UserDetailModal } from "../../components/UserDetailModal";
+import { userListColumns } from "../../utils/columns";
+import { FIND_MANY_USER } from "src/graphql/query/findManyUser";
+import { FindManyUserOutput } from "src/graphql/generated/graphql";
 
 export function Users() {
-  const [userData, setUserData] = useState<FindManyUserOutput['users']>([]);
+  const [userData, setUserData] = useState<FindManyUserOutput["users"]>([]);
   const [open, setOpen] = useState(false);
-  const [modalData, setModalData] = useState<FindManyUserOutput['users'][0]>();
+  const [modalData, setModalData] = useState<FindManyUserOutput["users"][0]>();
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
 
   const handleCancel = () => {
     setOpen(false);
   };
 
-  const handleClickRow = (rec: FindManyUserOutput['users'][0]) => {
+  const handleClickRow = (rec: FindManyUserOutput["users"][0]) => {
     setModalData(rec);
     setOpen(true);
   };
@@ -36,7 +36,7 @@ export function Users() {
     });
     setSkip(0);
     setCurrent(1);
-    setSearchText(value.searchText ?? '');
+    setSearchText(value.searchText ?? "");
   };
 
   const handlePagination = (e: number) => {
@@ -52,7 +52,7 @@ export function Users() {
     onError: (e) => {
       notification.error({ message: e.message });
     },
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
   });
 
   useEffect(() => {
@@ -70,14 +70,14 @@ export function Users() {
       <UserDetailModal
         open={open}
         handleCancel={handleCancel}
-        identity={modalData?.identity ?? ''}
-        email={modalData?.emailAuth?.email ?? ''}
+        identity={modalData?.identity ?? ""}
+        email={modalData?.emailAuth?.email ?? ""}
       />
-      <Divider>회원</Divider>
+      <Divider>회원 관리</Divider>
       <Form layout="inline" onFinish={handleSearch}>
         <Form.Item name="searchText">
           <Input.Search
-            style={{ width: '350px' }}
+            style={{ width: "295px" }}
             enterButton
             placeholder="검색어(이메일, 닉네임, 휴대폰)"
             onSearch={(e) => {
@@ -90,7 +90,7 @@ export function Users() {
         columns={userListColumns}
         dataSource={userData}
         pagination={{
-          position: ['bottomCenter'],
+          position: ["bottomCenter"],
           showSizeChanger: true,
           onChange: handlePagination,
           onShowSizeChange: (_current, size) => setTake(size),

@@ -1,29 +1,30 @@
-import { Button, Form, Input, notification, Table } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { ColumnsType } from 'antd/lib/table';
-import moment from 'moment';
+import { Button, Divider, Form, Input, notification, Table } from "antd";
+import React, { useEffect, useState } from "react";
+import { ColumnsType } from "antd/lib/table";
+import moment from "moment";
 
-import { AdminDetailModal } from '../../components/AdminDetailModal';
-import { OtpQrModal } from '../../components/OtpQrModal';
-import TransformBox from '../../components/TransformBox';
-import { AdminType } from '../../utils/columns/admin';
-import { FIND_MANY_ADMIN } from 'src/graphql/query/findManyAdmin';
-import { useLazyQuery } from '@apollo/client';
+import { AdminDetailModal } from "../../components/AdminDetailModal";
+import { OtpQrModal } from "../../components/OtpQrModal";
+import TransformBox from "../../components/TransformBox";
+import { AdminType } from "../../utils/columns/admin";
+import { FIND_MANY_ADMIN } from "src/graphql/query/findManyAdmin";
+import { useLazyQuery } from "@apollo/client";
+import * as S from "./style";
 
 export function Admin() {
   const [open, setOpen] = useState(false);
   const [modalData, setModalData] = useState<AdminType>();
   const [adminData, setAdminData] = useState<AdminType[]>([]);
   const [adminAuths] = useState<KindType[]>([]);
-  const [secret, setSecret] = useState('');
-  const [otpUrl, setOtpUrl] = useState('');
+  const [secret, setSecret] = useState("");
+  const [otpUrl, setOtpUrl] = useState("");
   const [qrModalopen, setQrModalopen] = useState(false);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [totalCount] = useState(0);
   const [current, setCurrent] = useState(1);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [next, setNext] = useState(false);
 
   const handlePagination = (e: number) => {
@@ -33,27 +34,27 @@ export function Admin() {
 
   const columns: ColumnsType<AdminType> = [
     {
-      title: 'no',
-      key: 'id',
-      dataIndex: 'id',
-      align: 'center',
+      title: "no",
+      key: "id",
+      dataIndex: "id",
+      align: "center",
       render: (_val, _record, index) => index + 1,
     },
     {
-      title: '이메일',
-      key: 'email',
-      dataIndex: 'email',
-      align: 'center',
+      title: "이메일",
+      key: "email",
+      dataIndex: "email",
+      align: "center",
     },
 
     {
-      title: '생성일',
-      key: 'createdAt',
-      dataIndex: 'createdAt',
+      title: "생성일",
+      key: "createdAt",
+      dataIndex: "createdAt",
       render: (val) => {
-        return moment(val).format('YYYY-MM-DD hh:mm');
+        return moment(val).format("YYYY-MM-DD hh:mm");
       },
-      align: 'center',
+      align: "center",
     },
   ];
 
@@ -105,7 +106,7 @@ export function Admin() {
     });
     setSkip(0);
     setCurrent(1);
-    setSearchText(value.searchText ?? '');
+    setSearchText(value.searchText ?? "");
   };
 
   const [findManyAdmin, { refetch, loading }] = useLazyQuery(FIND_MANY_ADMIN, {
@@ -115,7 +116,7 @@ export function Admin() {
     onError: (e) => {
       notification.error({ message: e.message });
     },
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
   });
 
   useEffect(() => {
@@ -143,6 +144,7 @@ export function Admin() {
         setOtpUrl={setOtpUrl}
         next={next}
       />
+      <Divider>관리자</Divider>
       <OtpQrModal
         open={qrModalopen}
         handleCancel={handleCancelQr}
@@ -157,22 +159,24 @@ export function Admin() {
           marginBottom: 30,
         }}
       >
-        <Form.Item name="searchWord">
-          <Input.Search
-            enterButton
-            placeholder="검색어(이메일)"
-            onSearch={(e) => {
-              handleSearch({ searchText: e });
-            }}
-          />
-        </Form.Item>
+        <S.Form>
+          <Form.Item name="searchWord">
+            <Input.Search
+              style={{ maxWidth: "180px" }}
+              enterButton
+              placeholder="검색어(이메일)"
+              onSearch={(e) => {
+                handleSearch({ searchText: e });
+              }}
+            />
+          </Form.Item>
+          <TransformBox justifyContent="flex-end" marginBottom={"30px"}>
+            <Button type="primary" onClick={handleClick}>
+              관리자 생성
+            </Button>
+          </TransformBox>
+        </S.Form>
       </Form>
-
-      <TransformBox justifyContent="flex-end" marginBottom={'30px'}>
-        <Button type="primary" onClick={handleClick}>
-          관리자 생성
-        </Button>
-      </TransformBox>
 
       <Table
         columns={columns}
@@ -185,7 +189,7 @@ export function Admin() {
         rowKey={(rec) => rec.email}
         loading={loading}
         pagination={{
-          position: ['bottomCenter'],
+          position: ["bottomCenter"],
           showSizeChanger: true,
           onChange: handlePagination,
           onShowSizeChange: (_current, size) => setTake(size),

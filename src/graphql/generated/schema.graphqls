@@ -499,14 +499,14 @@ type CountryCodeModel {
   """국가 이름"""
   name: String!
 
-  """국가 네이티브 이름"""
-  native: String!
-
   """국가번호"""
   phone: String!
 
   """국기"""
   emoji: String!
+
+  """국가코드"""
+  code: String!
 }
 
 """배너"""
@@ -530,7 +530,7 @@ type BannerModel {
   dotColor: String!
 
   """배너 경로"""
-  path: String!
+  path: String
 
   """생성일"""
   createdAt: Date!
@@ -723,6 +723,12 @@ type FindUserInfoByUserOutput {
 
   """거래 성사량 개수"""
   offerCompleteCount: Int!
+
+  """긍정적 피드백 누름 여부"""
+  isPositiveFeedback: Boolean!
+
+  """부정적 피드백 누름 여부"""
+  isNegativeFeedback: Boolean!
 }
 
 """약관 목록 조회 output"""
@@ -1682,7 +1688,7 @@ type Mutation {
     index: Int!
 
     """배너 경로"""
-    path: String!
+    path: String
   ): BannerModel!
 
   """배너 수정 (관리자)"""

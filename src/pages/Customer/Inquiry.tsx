@@ -198,6 +198,7 @@ export function Inquiry() {
         }}
         style={{
           marginTop: 30,
+          whiteSpace: "nowrap",
         }}
         onRow={(record) => {
           return {

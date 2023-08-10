@@ -4,10 +4,10 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: Query
+// GraphQL mutation operation: updateBanner
 // ====================================================
 
-export interface Query_findManyBanner {
+export interface updateBanner_updateBanner {
   /**
    * ID
    */
@@ -33,14 +33,28 @@ export interface Query_findManyBanner {
    */
   dotColor: string;
   /**
+   * 배너 경로
+   */
+  path: string | null;
+  /**
    * 생성일
    */
   createdAt: any;
 }
 
-export interface Query {
+export interface updateBanner {
   /**
-   * 배너 목록 조회
+   * 배너 수정 (관리자)
    */
-  findManyBanner: Query_findManyBanner[];
+  updateBanner: updateBanner_updateBanner;
+}
+
+export interface updateBannerVariables {
+  updateBannerId: number;
+  arrowColor?: string | null;
+  dotColor?: string | null;
+  index?: number | null;
+  path?: string | null;
+  pcFile?: any | null;
+  mobileFile?: any | null;
 }
