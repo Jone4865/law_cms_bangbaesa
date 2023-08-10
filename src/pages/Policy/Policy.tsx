@@ -1,25 +1,25 @@
-import { Divider, Form, Input, notification, Table } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useLazyQuery } from '@apollo/client';
+import { Button, Divider, Form, Input, notification, Table } from "antd";
+import React, { useEffect, useState } from "react";
+import { useLazyQuery } from "@apollo/client";
 
-import { PolicyDetailModal } from '../../components/PolicyDetailModal';
-import { policyColumns } from '../../utils/columns';
-import { FIND_MANY_POLICY } from 'src/graphql/query/findManyPolicy';
-import { FindManyPolicyQuery } from 'src/graphql/generated/graphql';
+import { PolicyDetailModal } from "../../components/PolicyDetailModal";
+import { policyColumns } from "../../utils/columns";
+import { FIND_MANY_POLICY } from "src/graphql/query/findManyPolicy";
+import { FindManyPolicyQuery } from "src/graphql/generated/graphql";
+import * as S from "./style";
 
 export function Policy() {
   const [policyData, setPolicyData] =
-    useState<FindManyPolicyQuery['findManyPolicy']['policies']>();
+    useState<FindManyPolicyQuery["findManyPolicy"]["policies"]>();
 
   const [open, setOpen] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
   const [modalData, setModalData] =
-    useState<FindManyPolicyQuery['findManyPolicy']['policies'][0]>();
+    useState<FindManyPolicyQuery["findManyPolicy"]["policies"][0]>();
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [current, setCurrent] = useState(1);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
 
   const handlePagination = (e: number) => {
     setSkip((e - 1) * take);
@@ -27,15 +27,19 @@ export function Policy() {
   };
 
   const handleRow = (
-    record: FindManyPolicyQuery['findManyPolicy']['policies'][0],
+    record: FindManyPolicyQuery["findManyPolicy"]["policies"][0]
   ) => {
     setOpen(true);
-    setIsEdit(true);
     setModalData(record);
   };
 
   const handleCancel = () => {
     setOpen(false);
+  };
+
+  const handleClickAdd = () => {
+    setModalData(undefined);
+    setOpen(true);
   };
 
   const handleRefetch = () => {
@@ -61,7 +65,7 @@ export function Policy() {
     });
     setSkip(0);
     setCurrent(1);
-    setSearchText(value.searchText ?? '');
+    setSearchText(value.searchText ?? "");
   };
 
   const [findManyPolicy, { refetch, loading }] = useLazyQuery(
@@ -74,8 +78,8 @@ export function Policy() {
       onError: (e) => {
         notification.error({ message: e.message });
       },
-      fetchPolicy: 'no-cache',
-    },
+      fetchPolicy: "no-cache",
+    }
   );
 
   useEffect(() => {
@@ -94,20 +98,24 @@ export function Policy() {
         data={modalData}
         handleCancel={handleCancel}
         open={open}
-        isEdit={isEdit}
         refetch={handleRefetch}
       />
       <Divider>약관 관리</Divider>
       <Form layout="inline" onFinish={handleSearch}>
-        <Form.Item name="searchText">
-          <Input.Search
-            enterButton
-            placeholder="검색어(종류, 내용)"
-            onSearch={(e) => {
-              handleSearch({ searchText: e });
-            }}
-          />
-        </Form.Item>
+        <S.Form>
+          <Form.Item name="searchText">
+            <Input.Search
+              enterButton
+              placeholder="검색어(종류, 내용)"
+              onSearch={(e) => {
+                handleSearch({ searchText: e });
+              }}
+            />
+          </Form.Item>
+          <Button onClick={handleClickAdd} type="primary">
+            등록
+          </Button>
+        </S.Form>
       </Form>
 
       <Table
@@ -119,7 +127,7 @@ export function Policy() {
           };
         }}
         pagination={{
-          position: ['bottomCenter'],
+          position: ["bottomCenter"],
           showSizeChanger: true,
           onChange: handlePagination,
           onShowSizeChange: (_current, size) => setTake(size),
@@ -130,7 +138,7 @@ export function Policy() {
         rowKey={(rec) => rec.id}
         scroll={{ x: 800 }}
         style={{
-          marginTop: '30px',
+          marginTop: "30px",
         }}
       />
     </>
